@@ -1,9 +1,8 @@
 import {Request, Response, Router} from "express";
-import StatusCodes from "http-status-codes";
-import {ParamMissingError, RoomNotFoundError} from "@shared/errors";
 import SocketIO from "socket.io";
-import auctionService from '@services/aution-service';
+import auctionService from '../services/aution-service';
 import {AuctionSchema} from "../../@auction/api/models/AuctionSchema";
+import {StatusCodes} from "http-status-codes";
 
 // Misc
 const router = Router();
@@ -23,13 +22,13 @@ router.post(p.connect, (req: Request, res: Response) => {
   const {socketId, auctionGuid} = req.params;
   // Check params
   if (!socketId || !auctionGuid) {
-	throw new ParamMissingError();
+	throw new Error();
   }
   // Get room
   const io: SocketIO.Server = req.app.get('socketio');
   const socket = io.sockets.sockets.get(socketId);
   if (!socket) {
-	throw new RoomNotFoundError();
+	throw new Error();
   }
   // Connect
   auctionService.connectToAuctionRoom(socket, auctionGuid);
@@ -44,13 +43,13 @@ router.post(p.leave, (req: Request, res: Response) => {
   const {socketId, auctionGuid} = req.params;
   // Check params
   if (!socketId || !auctionGuid) {
-	throw new ParamMissingError();
+	throw new Error();
   }
   // Get room
   const io: SocketIO.Server = req.app.get('socketio');
   const socket = io.sockets.sockets.get(socketId);
   if (!socket) {
-	throw new RoomNotFoundError();
+	throw new Error();
   }
   // Connect
   auctionService.leaveToAuctionRoom(socket, auctionGuid);
@@ -67,13 +66,13 @@ router.post(p.emit_auction_schema, (req: Request, res: Response) => {
   console.log(socketId, auction)
   // Check params
   if (!socketId) {
-	throw new ParamMissingError();
+	throw new Error();
   }
   // Get room
   const io: SocketIO.Server = req.app.get('socketio');
   const socket = io.sockets.sockets.get(socketId);
   if (!socket) {
-	throw new RoomNotFoundError();
+	throw new Error();
   }
   // Connect
   console.log(auction);

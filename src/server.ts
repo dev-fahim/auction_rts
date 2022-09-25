@@ -1,20 +1,16 @@
 import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
-import path from 'path';
 import http from 'http';
 import helmet from 'helmet';
-import StatusCodes from 'http-status-codes';
 import { Server as SocketIo } from 'socket.io';
-import express, { NextFunction, Request, Response } from 'express';
+import express from 'express';
 import cors from 'cors';
 import body_parser from 'body-parser';
 
 import 'express-async-errors';
 
 import BaseRouter from './routes/api';
-import logger from 'jet-logger';
-import envVars from '@shared/env-vars';
-import { CustomError } from '@shared/errors';
+import envVars from './shared/env-vars';
 
 
 // **** Init express **** //
@@ -43,49 +39,6 @@ if (envVars.nodeEnv === 'production') {
 
 // Add APIs
 app.use('/api', BaseRouter);
-
-// Error handling
-app.use((err: Error | CustomError, _: Request, res: Response, __: NextFunction) => {
-  logger.err(err, true);
-  const status = (err instanceof CustomError ? err.HttpStatus : StatusCodes.BAD_REQUEST);
-  return res.status(status).json({
-    error: err.message,
-  });
-});
-
-
-// **** Serve front-end content **** //
-
-const viewsDir = path.join(__dirname, 'views');
-app.set('views', viewsDir);
-const staticDir = path.join(__dirname, 'public');
-app.use(express.static(staticDir));
-
-// Login page
-app.get('/', (req: Request, res: Response) => {
-  return res.sendFile('login.html', {root: viewsDir});
-});
-
-// Users page
-app.get('/users', (req: Request, res: Response) => {
-  const jwt = req.signedCookies[envVars.cookieProps.key];
-  if (!jwt) {
-    return res.redirect('/');
-  } else {
-    return res.sendFile('users.html', {root: viewsDir});
-  }
-});
-
-// Chat page
-app.get('/chat', (req: Request, res: Response) => {
-  const jwt = req.signedCookies[envVars.cookieProps.key];
-  if (!jwt) {
-    return res.redirect('/');
-  } else {
-    return res.sendFile('chat.html', {root: viewsDir});
-  }
-});
-
 
 // **** Setup Socket.io **** //
 

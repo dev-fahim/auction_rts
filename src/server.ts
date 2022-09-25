@@ -26,7 +26,7 @@ const app = express();
 app.use(body_parser.urlencoded({extended: true}));
 app.use(body_parser.json());
 app.use(cors({
-  origin: ['http://localhost:4200', 'http://192.168.0.103:4200', 'http://192.168.120.197:4200'],
+  origin: ['http://localhost:4200', 'http://192.168.0.103:4200', 'http://192.168.120.197:4200', 'https://helpful-marigold-e52cb8.netlify.app'],
   methods: ['GET', 'POST']
 }))
 app.use(cookieParser(envVars.cookieProps.secret));
@@ -94,7 +94,7 @@ app.get('/chat', (req: Request, res: Response) => {
 const server = http.createServer(app);
 const io = new SocketIo(server, {
   cors: {
-    origin: ['http://localhost:4200', 'http://192.168.0.103:4200', 'http://192.168.120.197:4200'],
+    origin: ['http://localhost:4200', 'http://192.168.0.103:4200', 'http://192.168.120.197:4200', 'https://helpful-marigold-e52cb8.netlify.app'],
     methods: ['GET', 'POST']
   }
 });
